@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from .models import Topic, Entry
 from .forms import TopicForm, EntryForm
 from django.contrib.auth.decorators import login_required
@@ -22,7 +22,7 @@ def topics(request):
 @login_required
 def topic(request, topic_id):
     """Show a topic"""
-    a_topic = Topic.objects.get(id=topic_id)
+    a_topic = get_object_or_404(Topic, id=topic_id)
     if not is_user_authorised_access_topic(request, a_topic):
         raise Http404
     entries = a_topic.entry_set.order_by('date_added')
@@ -51,7 +51,7 @@ def create_topic(request):
 @login_required
 def create_entry(request, topic_id):
     """Add new Entry to a particular Topic"""
-    entry_topic = Topic.objects.get(id=topic_id)
+    entry_topic = get_object_or_404(Topic, id=topic_id)
 
     if not is_user_authorised_access_topic(request, entry_topic):
         raise Http404
@@ -72,7 +72,7 @@ def create_entry(request, topic_id):
 
 @login_required
 def edit_entry(request, entry_id):
-    entry_to_edit = Entry.objects.get(id=entry_id)
+    entry_to_edit = get_object_or_404(Entry, id=entry_id)
     entry_topic = entry_to_edit.topic
     if not is_user_authorised_access_topic(request, entry_topic):
         raise Http404
